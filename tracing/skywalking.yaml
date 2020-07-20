@@ -1,0 +1,85 @@
+      
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: skywalking
+  labels:
+    app: skywalking
+spec:
+  type: NodePort
+  ports:
+  - port: 11800
+    name: server
+  - port: 12800
+    name: server2
+  selector:
+    app: skywalking
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: skywalking-ui
+  labels:
+    app: skywalking-ui
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    name: server
+  selector:
+    app: skywalking-ui
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skywalking
+  labels:
+    app: skywalking
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: skywalking
+  template:
+    metadata:
+      labels:
+        app: skywalking
+    spec:
+      containers:
+      - name: skywalking
+        image: apache/skywalking-oap-server:7.0.0-es7
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 11800
+        - containerPort: 12800
+        env:
+          - name: SW_STORAGE
+            value: h2
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skywalking-ui
+  labels:
+    app: skywalking-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: skywalking-ui
+  template:
+    metadata:
+      labels:
+        app: skywalking-ui
+    spec:
+      containers:
+      - name: kv
+        image: apache/skywalking-ui:7.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+          - name: SW_OAP_ADDRESS
+            value: skywalking:12800

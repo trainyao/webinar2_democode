@@ -1,0 +1,68 @@
+---
+##################################################################################################
+# kv grpc services
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: kv
+  labels:
+    app: kv
+spec:
+  ports:
+  - port: 8081
+    name: grpc-kv
+  selector:
+    app: kv
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kv-v1
+  labels:
+    app: kv
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kv
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: kv
+        version: v1
+    spec:
+      containers:
+      - name: kv
+        image: docker.io/trainyao/gloo_in_none_kubernetes_env_kv:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8081
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kv-v2
+  labels:
+    app: kv
+    version: v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kv
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: kv
+        version: v2
+    spec:
+      containers:
+      - name: kv
+        image: docker.io/trainyao/gloo_in_none_kubernetes_env_kv:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8081

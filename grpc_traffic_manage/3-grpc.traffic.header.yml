@@ -1,0 +1,27 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: kv-virtualservice
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - kv-gateway
+  http:
+  - match: # match grpc header 'Header: mosn' key value and route it to kv-v1
+    - headers:
+        Header:
+          exact: mosn
+    route:
+    - destination:
+        host: kv
+        subset: v1
+        port:
+          number: 8081
+  - route:
+    - destination:
+        host: kv
+        port:
+          number: 8081
+
