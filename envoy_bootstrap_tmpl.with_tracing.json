@@ -665,6 +665,30 @@
     }
   }
   {{ end }}
+  ,
+ "metrics": {
+    "sinks": [
+      {
+        "type": "prometheus",
+        "config": {
+	  "endpoint": "/stats/prometheus",
+          "port": 15090
+        }
+      }
+    ]
+  },
+
+  "tracing": {
+    "enable": true,
+    "driver": "SkyWalking",
+    "config": {
+      "reporter": "gRPC",
+      "backend_service": "skywalking.default:11800",
+      "service_name": "{{ .cluster }}-{{ .nodeID }}",
+      "with_register": true
+    }
+  }
+
 
 }
 

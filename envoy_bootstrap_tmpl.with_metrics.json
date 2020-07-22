@@ -665,6 +665,18 @@
     }
   }
   {{ end }}
+  ,
+ "metrics": {
+    "sinks": [
+      {
+        "type": "prometheus",
+        "config": {
+	  "endpoint": "/stats/prometheus",
+          "port": 15090
+        }
+      }
+    ]
+  }
 
 }
 
